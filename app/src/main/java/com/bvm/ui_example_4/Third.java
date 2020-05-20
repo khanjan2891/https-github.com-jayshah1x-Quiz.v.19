@@ -248,7 +248,7 @@ public class Third extends AppCompatActivity implements NavigationView.OnNavigat
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
-            });
+            });//
 
         }
         else{
