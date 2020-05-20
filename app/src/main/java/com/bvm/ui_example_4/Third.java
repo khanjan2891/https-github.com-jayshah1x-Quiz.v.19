@@ -187,7 +187,7 @@ public class Third extends AppCompatActivity implements NavigationView.OnNavigat
 
 
     public void addbutton(final View view){
-        final String Subjectname = subjectCode.getText().toString();
+        final String Subjectname = subjectCode.getText().toString().toUpperCase();
 
         if(list.contains(Subjectname)){
             added = true;
@@ -252,7 +252,7 @@ public class Third extends AppCompatActivity implements NavigationView.OnNavigat
 
         }
         else{
-            Toast.makeText(Third.this, "Subject is already added", Toast.LENGTH_SHORT).show();
+            subjectCode.setError("Subject is already added");
         }
 
 
