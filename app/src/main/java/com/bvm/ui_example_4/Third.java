@@ -48,11 +48,15 @@ public class Third extends AppCompatActivity implements NavigationView.OnNavigat
     EditText subjectCode;
     DatabaseReference myref;
     List<Button> btList = new ArrayList<Button>();
+    List<String> list = new ArrayList<String>();
+
     int ButtonCounter = 0;
+    Boolean added = true;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        list.clear();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third);
         button = (ImageButton) findViewById(R.id.more);
@@ -183,61 +187,73 @@ public class Third extends AppCompatActivity implements NavigationView.OnNavigat
 
 
     public void addbutton(final View view){
+        final String Subjectname = subjectCode.getText().toString();
 
-        myref = FirebaseDatabase.getInstance().getReference();
-        myref.child("Subject Code").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        if(list.contains(Subjectname)){
+            added = true;
+        }else{
+            added = false;
+        }
+        if(!added){
+            list.add(Subjectname);
+            myref = FirebaseDatabase.getInstance().getReference();
+            myref.child("Subject Code").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                if(dataSnapshot.hasChild(subjectCode.getText().toString()))
-                {
-                    String Subjectname = subjectCode.getText().toString();
-                    String name = dataSnapshot.child(Subjectname).getValue().toString();
-                    subjectCode.setText(null);
-                    addList(name);
+                    if(dataSnapshot.hasChild(Subjectname))
+                    {
 
-                }else{
-                    subjectCode.setError("There are no such subject");
+                        String name = dataSnapshot.child(Subjectname).getValue().toString();
+                        subjectCode.setText(null);
+                        addList(name);
+
+                    }else{
+                        subjectCode.setError("There are no such subject");
+
+                    }
+                }
+
+                private void addList(String string) {
+
+                    subjects.setVisibility(View.VISIBLE);
+                    Button button1 = new Button(Third.this);
+
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                    int[] images = {R.drawable.orange_tree,R.drawable.pink_tree,R.drawable.colorful_tree,R.drawable.purple_tree,R.drawable.brown_tree};
+                    Random rand = new Random();
+                    button1.setBackgroundResource(images[rand.nextInt(images.length)]);
+                    button1.setText(string);
+                    button1.setTextSize(TypedValue.COMPLEX_UNIT_PX, 70);
+                    button1.setGravity(Gravity.CENTER_VERTICAL);
+                    button1.setTextColor(Color.BLACK);
+                    btList.add(button1);
+                    ButtonCounter++;
+                    params.leftMargin= 0;
+                    params.rightMargin= 0;
+                    params.topMargin=10;
+                    params.height=450;
+
+                    button1.setLayoutParams(params);
+
+
+                    rootView.addView(button1, params);
+                    cancel(view);
 
                 }
-            }
 
-            private void addList(String string) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                subjects.setVisibility(View.VISIBLE);
-                Button button1 = new Button(Third.this);
+                }
+            });
 
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                int[] images = {R.drawable.orange_tree,R.drawable.pink_tree,R.drawable.colorful_tree,R.drawable.purple_tree,R.drawable.brown_tree};
-                Random rand = new Random();
-                button1.setBackgroundResource(images[rand.nextInt(images.length)]);
-                button1.setText(string);
-                button1.setTextSize(TypedValue.COMPLEX_UNIT_PX, 70);
-                button1.setGravity(Gravity.CENTER_VERTICAL);
-                button1.setTextColor(Color.BLACK);
-                btList.add(button1);
-                ButtonCounter++;
-                params.leftMargin= 0;
-                params.rightMargin= 0;
-                params.topMargin=10;
-                params.height=450;
-
-                button1.setLayoutParams(params);
-
-
-                rootView.addView(button1, params);
-                cancel(view);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
+        }
+        else{
+            Toast.makeText(Third.this, "Subject is already added", Toast.LENGTH_SHORT).show();
+        }
 
 
 }
